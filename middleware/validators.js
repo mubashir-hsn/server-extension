@@ -13,7 +13,8 @@ export const generateAnswerRules = [
 export function handleValidationErrors(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ error: "Invalid input", details: errors.array() });
+    const first = errors.array()[0];
+    return res.status(400).json({ error: `Invalid input: ${first.msg || `${first.path} is invalid`}`, details: errors.array() });
   }
   next();
 }

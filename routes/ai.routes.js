@@ -2,7 +2,7 @@
 import { Router } from "express";
 import { aiRateLimiter } from "../middleware/rate-limiter.js";
 import { generateAnswerRules, handleValidationErrors } from "../middleware/validators.js";
-import { generateApplicationAnswer } from "../services/ai.service.js";
+import { generateApplicationAnswer, testProvider } from "../services/ai.service.js";
 import { detectSensitiveCategory } from "../services/sensitive-question-filter.js";
 
 const router = Router();
@@ -21,16 +21,17 @@ router.post("/generate-answer", aiRateLimiter, generateAnswerRules, handleValida
       });
     }
 
-    const result = await generateApplicationAnswer({
-      profile,
-      resume,
-      jobTitle,
-      company,
-      jobDescription,
-      question,
-    });
-
+    const result = await generateApplicationAnswer({ profile, resume, jobTitle, company, jobDescription, question });
     res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Used by the dashboard's "Test AI" button: makes one tiny real provider call.
+router.post("/test", aiRateLimiter, async (req, res, next) => {
+  try {
+    res.json(await testProvider());
   } catch (err) {
     next(err);
   }
