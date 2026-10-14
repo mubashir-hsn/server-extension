@@ -10,7 +10,7 @@ import aiRoutes from "./routes/ai.routes.js";
 import { notFoundHandler, errorHandler } from "./middleware/error-handler.js";
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000 ;
 
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "*").split(",").map((o) => o.trim());
 
