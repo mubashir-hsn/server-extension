@@ -6,7 +6,7 @@ const GEMINI_BASE = (process.env.GEMINI_BASE_URL || "https://generativelanguage.
 const TOTAL_BUDGET_MS = 55000; // stay under the extension's 70s client timeout
 const ATTEMPT_TIMEOUT_MS = 25000;
 
-class HttpError extends Error {
+export class HttpError extends Error {
   constructor(status, publicMessage) {
     super(publicMessage);
     this.status = status;
@@ -207,6 +207,12 @@ async function callProvider(systemPrompt, userPrompt) {
   if (PROVIDER === "openai") return callOpenAI(systemPrompt, userPrompt);
   if (PROVIDER === "anthropic") return callAnthropic(systemPrompt, userPrompt);
   return callGemini(systemPrompt, userPrompt);
+}
+
+export async function generateJson(systemPrompt, userPrompt) {
+  const { text } = await callProvider(`${systemPrompt}\nReturn JSON only. Do not use markdown fences.`, userPrompt);
+  const candidate = String(text || "").trim().replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
+  try { return JSON.parse(candidate); } catch (error) { throw new HttpError(502, "The AI returned invalid JSON."); }
 }
 
 /* ---------------------------------------------------------------------- *

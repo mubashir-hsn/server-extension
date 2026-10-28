@@ -7,6 +7,7 @@ import morgan from "morgan";
 
 import healthRoutes from "./routes/health.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
+import leadRoutes from "./routes/lead.routes.js";
 import { notFoundHandler, errorHandler } from "./middleware/error-handler.js";
 
 const app = express();
@@ -33,6 +34,7 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
 app.use("/api/health", healthRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/ai", leadRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
